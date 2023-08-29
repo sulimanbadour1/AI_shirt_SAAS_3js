@@ -37,9 +37,29 @@ const Customizer = () => {
       case "filepicker":
         return <FilePicker file={file} setFile={setFile} readFile={readFile} />;
       case "aipicker":
-        return <AIPicker />;
+        return (
+          <AIPicker
+            prompt={prompt}
+            setPrompt={setPrompt}
+            generatingImg={generatingImg}
+            handleSubmit={handleSubmit}
+          />
+        );
       default:
         return null;
+    }
+  };
+
+  const handleSubmit = async (type) => {
+    if (!prompt) return alert("Please enter a prompt");
+
+    try {
+      //call our backend api to generate an image
+    } catch (error) {
+      alert(error);
+    } finally {
+      setGeneratingImg(false);
+      setActiveEditorTab("");
     }
   };
 
@@ -63,6 +83,14 @@ const Customizer = () => {
         state.isLogoTexture = true;
         state.isFullTexture = false;
     }
+
+    // after changing the filter tab, we need to re-render the canvas
+    setActiveFilterTab((prevState) => {
+      return {
+        ...prevState,
+        [tabName]: !prevState[tabName],
+      };
+    });
   };
 
   const readFile = (type) => {
@@ -113,9 +141,11 @@ const Customizer = () => {
               <Tab
                 key={tab.name}
                 tab={tab}
-                handleClick={() => {}}
+                handleClick={() => {
+                  handleActiveFilterTab(tab.name);
+                }}
                 isFilterTab
-                isActiveTab=""
+                isActiveTab={activeFilterTab[tab.name]}
               />
             ))}
           </motion.div>
